@@ -1,157 +1,94 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 
 // Core UI Components
 import CustomCursor from './components/CustomCursor';
-import FloatingToolbar from './components/FloatingToolbar';
-import CafeScene from './components/CafeScene';
+import BentoGrid from './components/BentoGrid';
 
-// Overlays
-import ProjectMenu from './components/ProjectMenu';
-import InfoOverlay from './components/InfoOverlay';
+// Scroll-Driven Sections
+import ScrollProjects from './sections/ScrollProjects';
+import KineticTypo from './sections/KineticTypo';
+
+// Overlays & Modals
+import ProjectDetailModal from './components/ProjectDetailModal';
 import MenuOverlay from './components/MenuOverlay';
 
-// Lofi Background Loop track (soft, chill ambient loop)
-const AUDIO_URL = 'https://assets.mixkit.co/music/preview/mixkit-lo-fi-dreams-1448.mp3';
-const CUPS_ORDER = ['aether', 'kronos', 'nebula', 'valo', 'about'];
-
 export default function App() {
-  const [lampOn, setLampOn] = useState(true); // Lamp starts ON to illuminate the warm scene
-  const [activeProject, setActiveProject] = useState(null); // Clicked cup details receipt
-  const [infoOpen, setInfoOpen] = useState(false); // Info modal
-  const [menuOpen, setMenuOpen] = useState(false); // Menu modal
-  const [musicPlaying, setMusicPlaying] = useState(false); // Lofi state
-  
-  const audioRef = useRef(null);
-
-  // Initialize and clean up global audio
-  useEffect(() => {
-    audioRef.current = new Audio(AUDIO_URL);
-    audioRef.current.loop = true;
-    audioRef.current.volume = 0.2; // Keep background music very soft and ambient
-
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-    };
-  }, []);
-
-  // Sync music play state
-  const handleToggleMusic = () => {
-    if (!audioRef.current) return;
-
-    if (musicPlaying) {
-      audioRef.current.pause();
-      setMusicPlaying(false);
-    } else {
-      audioRef.current.play()
-        .then(() => setMusicPlaying(true))
-        .catch(err => {
-          console.warn("Audio blocked by browser autoplay constraints.", err);
-          alert("Click anywhere on the screen first, then toggle music.");
-        });
-    }
-  };
-
-  // Nav: cycle left (previous cup)
-  const handlePrevCup = () => {
-    let currentIndex = CUPS_ORDER.indexOf(activeProject);
-    if (currentIndex === -1) {
-      // If nothing selected, start from the first cup
-      setActiveProject(CUPS_ORDER[0]);
-    } else {
-      let prevIndex = (currentIndex - 1 + CUPS_ORDER.length) % CUPS_ORDER.length;
-      setActiveProject(CUPS_ORDER[prevIndex]);
-    }
-  };
-
-  // Nav: cycle right (next cup)
-  const handleNextCup = () => {
-    let currentIndex = CUPS_ORDER.indexOf(activeProject);
-    if (currentIndex === -1) {
-      setActiveProject(CUPS_ORDER[0]);
-    } else {
-      let nextIndex = (currentIndex + 1) % CUPS_ORDER.length;
-      setActiveProject(CUPS_ORDER[nextIndex]);
-    }
-  };
+  const [activeProject, setActiveProject] = useState(null); // Project details modal state
+  const [menuOpen, setMenuOpen] = useState(false); // Blackboard menu board toggle state
 
   return (
-    <div className="relative min-h-screen bg-[#eae4d9] text-[#3d2314] flex flex-col justify-between py-6 px-6 md:px-12 selection:bg-[#3d2314] selection:text-[#eae4d9] overflow-hidden">
+    <div className="snap-container select-none">
       
-      {/* Dynamic blending custom cursor */}
+      {/* Dynamic tracking cursor pointer */}
       <CustomCursor />
 
-      {/* 1. Header Bar */}
-      <header className="relative w-full z-30 flex items-center justify-between py-4 select-none">
-        
-        {/* Monospace tagline */}
-        <span className="font-space text-[10px] md:text-xs font-bold uppercase tracking-widest text-[#3d2314]/75">
-          (a café-shaped portfolio)
-        </span>
-
-        {/* Cafe Title logo */}
-        <h1 className="font-syne text-3xl md:text-4xl font-extrabold uppercase tracking-tight text-[#3d2314]">
-          ALt.
-        </h1>
-
-        {/* Audio control pause/play toggle */}
-        <button
-          onClick={handleToggleMusic}
-          className="flex h-9 w-9 items-center justify-center border-2 border-[#3d2314] rounded-lg text-[#3d2314] hover:bg-[#3d2314] hover:text-[#eae4d9] active:scale-95 transition-all cursor-none outline-none focus:outline-none"
-          title="Toggle Background Music"
-        >
-          {musicPlaying ? (
-            // Pause symbol (||)
-            <span className="font-sans font-bold text-xs">||</span>
-          ) : (
-            // Play symbol (▶)
-            <span className="font-sans font-bold text-xs pl-0.5">▶</span>
-          )}
-        </button>
-
-      </header>
-
-      {/* 2. Main Cafe Scene Wrapper (Centers the aspect-ratio scene) */}
-      <main className="relative flex-1 flex items-center justify-center py-6 w-full max-w-7xl mx-auto z-10">
-        
-        <div className="w-full h-full flex items-center justify-center">
-          <CafeScene 
-            lampOn={lampOn} 
-            setLampOn={setLampOn}
-            selectedProjectId={activeProject}
-            onSelectProject={(id) => setActiveProject(id)}
-            musicPlaying={musicPlaying}
-            onToggleMusic={handleToggleMusic}
-          />
-        </div>
-
-      </main>
-
-      {/* 3. Awwwards Vertical Nominee Badge on Right Edge */}
-      <div className="fixed right-0 top-1/2 -translate-y-1/2 z-20 hidden md:flex flex-col items-center bg-white border-y-2 border-l-2 border-[#3d2314] py-4 px-2 w-10 text-[#3d2314] font-mono select-none">
-        <span className="font-syne font-extrabold text-base tracking-wider border-b border-[#3d2314] pb-1.5 mb-2">W.</span>
-        <span className="text-[8px] font-bold uppercase tracking-[0.25em] writing-mode-vertical rotate-180 py-1 origin-center whitespace-nowrap text-center">
-          Nominee
-        </span>
+      {/* Subtle Film Grain Texture Overlay */}
+      <div className="pointer-events-none fixed inset-0 z-50 h-full w-full opacity-[0.015] mix-blend-overlay noise-overlay">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="h-full w-full">
+          <filter id="noiseFilter">
+            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/>
+          </filter>
+          <rect width="100%" height="100%" filter="url(#noiseFilter)"/>
+        </svg>
       </div>
 
-      {/* 4. Bottom Floating Pill Toolbar */}
-      <FloatingToolbar 
-        onToggleInfo={() => setInfoOpen(!infoOpen)}
-        onToggleMenu={() => setMenuOpen(!menuOpen)}
-        onPrevCup={handlePrevCup}
-        onNextCup={handleNextCup}
-      />
+      {/* SECTION 1: Bento Dashboard Snap Section */}
+      <section className="snap-section flex flex-col justify-between py-6 px-6 md:px-12 bg-[#efedee] border-b border-bento-text/5">
+        
+        {/* Header Bar */}
+        <header className="relative w-full z-30 flex items-center justify-between py-4 select-none">
+          {/* Monospace tagline */}
+          <span className="font-space text-[10px] md:text-xs font-bold uppercase tracking-widest text-[#111111]/60">
+            (a motion developer portfolio)
+          </span>
 
-      {/* 5. Animated Overlays */}
+          {/* Center brand title */}
+          <h1 className="font-syne text-3xl md:text-4xl font-extrabold uppercase tracking-tight text-[#111111]">
+            ALt.
+          </h1>
+
+          {/* Top-right menu list toggle button */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="flex h-9 w-9 items-center justify-center border-2 border-[#111111] rounded-lg text-[#111111] hover:bg-[#ff3b00] hover:border-[#ff3b00] hover:text-white active:scale-95 transition-all cursor-none outline-none focus:outline-none"
+            title="Open Menu Board"
+          >
+            {/* Pause-like hamburger menu lines */}
+            <div className="flex flex-col gap-1 w-4 items-center justify-center">
+              <div className="h-[2px] w-full bg-current rounded" />
+              <div className="h-[2px] w-full bg-current rounded" />
+            </div>
+          </button>
+        </header>
+
+        {/* Bento grid panel */}
+        <div className="flex-1 flex items-center justify-center max-w-7xl mx-auto w-full">
+          <BentoGrid onSelectProject={(project) => setActiveProject(project)} />
+        </div>
+
+        {/* Vertical Nominee Badge */}
+        <div className="fixed right-0 top-1/2 -translate-y-1/2 z-20 hidden md:flex flex-col items-center bg-[#efedee] border-y border-l border-[#111111]/30 py-4 px-2 w-10 text-[#111111] font-mono select-none rounded-l-xl shadow-sm">
+          <span className="font-syne font-extrabold text-base tracking-wider border-b border-[#111111]/15 pb-1.5 mb-2">W.</span>
+          <span className="text-[8px] font-bold uppercase tracking-[0.25em] writing-mode-vertical rotate-180 py-1 origin-center whitespace-nowrap text-center">
+            Nominee
+          </span>
+        </div>
+
+      </section>
+
+      {/* SECTION 2: Stacked Scroll Projects (yields 3 snap points) */}
+      <ScrollProjects onSelectProject={(project) => setActiveProject(project)} />
+
+      {/* SECTION 3: Kinetic Typography Footer Section (snaps to bottom) */}
+      <KineticTypo />
+
+      {/* MODALS & OVERLAYS */}
       <AnimatePresence>
         
-        {/* Project details thermal receipt ticket */}
+        {/* Full-screen Project details slide */}
         {activeProject && (
-          <ProjectMenu 
+          <ProjectDetailModal 
             project={activeProject} 
             onClose={() => setActiveProject(null)} 
           />
@@ -162,15 +99,7 @@ export default function App() {
           <MenuOverlay 
             isOpen={menuOpen} 
             onClose={() => setMenuOpen(false)} 
-            onSelectProject={(id) => setActiveProject(id)}
-          />
-        )}
-
-        {/* Portfolio Info Overlay */}
-        {infoOpen && (
-          <InfoOverlay 
-            isOpen={infoOpen} 
-            onClose={() => setInfoOpen(false)} 
+            onSelectProject={(id) => setActiveProject({ id })}
           />
         )}
 

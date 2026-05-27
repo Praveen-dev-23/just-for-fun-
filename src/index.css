@@ -5,23 +5,24 @@
   --font-sans: "Plus Jakarta Sans", sans-serif;
   --font-space: "Space Grotesk", sans-serif;
 
-  --color-cafe-bg: #eae4d9;
-  --color-cafe-brown: #3d2314;
-  --color-cafe-dark: #21120a;
-  --color-cafe-light: #f4f0e6;
-  --color-cafe-glow: #e8d7bb;
+  --color-bento-bg: #efedee;
+  --color-bento-text: #111111;
+  --color-bento-muted: #555555;
+  --color-bento-accent: #ff3b00;
+  
+  --animate-pulse-slow: pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 @layer base {
   body {
-    background-color: #eae4d9;
-    color: #3d2314;
-    overflow-x: hidden;
+    background-color: #efedee;
+    color: #111111;
+    overflow: hidden; /* Prevent body scroll, use snap-container instead */
     font-family: var(--font-sans);
     margin: 0;
   }
 
-  /* Clean browser-level cursor overrides for custom cursor tracking */
+  /* Custom cursor hiding for desktops */
   @media (min-width: 1024px) {
     body, a, button, [role="button"] {
       cursor: none !important;
@@ -29,55 +30,60 @@
   }
 }
 
-/* Custom scrollbar matching the cafe aesthetic */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* Snappy Scroll Snap utilities */
+.snap-container {
+  height: 100vh;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
-::-webkit-scrollbar-track {
-  background: #eae4d9;
-}
-::-webkit-scrollbar-thumb {
-  background: #c7bdac;
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #3d2314;
+.snap-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
-/* Custom line-art SVG helper styles */
-.stroke-cafe {
-  stroke: #3d2314;
+.snap-section {
+  height: 100vh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  position: relative;
+  overflow: hidden;
+  width: 100vw;
 }
 
-.fill-cafe {
-  fill: #3d2314;
+/* Glassmorphism panel styling */
+.glass-card {
+  background: rgba(255, 255, 255, 0.38);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
 }
 
-/* Steam particle keyframes */
-@keyframes steam-rise {
-  0% {
-    transform: translateY(0) scale(0.8);
-    opacity: 0;
-  }
-  15% {
-    opacity: 0.35;
-  }
-  50% {
-    transform: translateY(-40px) translateX(5px) scale(1.1);
-    opacity: 0.2;
-  }
-  100% {
-    transform: translateY(-80px) translateX(-5px) scale(1.3);
-    opacity: 0;
-  }
+.glass-card-dark {
+  background: rgba(17, 17, 17, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.animate-steam {
-  animation: steam-rise 4s ease-out infinite;
+/* Vertical Text Utilities */
+.writing-mode-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
 }
 
-/* Monospace fonts alignment */
-.font-mono-tag {
-  font-family: var(--font-space), monospace;
+/* Grayscale high contrast image helper */
+.portrait-bw {
+  filter: grayscale(100%) contrast(1.15) brightness(0.95);
+  mix-blend-mode: multiply;
+}
+
+.portrait-red {
+  filter: contrast(1.3) sepia(100%) hue-rotate(-50deg) saturate(3.5) brightness(0.7);
+}
+
+/* Subtle Film Grain SVG Overlay */
+.noise-overlay {
+  opacity: 0.018;
 }

@@ -68,39 +68,39 @@ export default function CustomCursor() {
 
   if (!visible) return null;
 
-  // Design sizes for different hover states, matching the line-art outlines
+  // Design sizes for different hover states, matching the bento accents
   const outerVariants = {
     default: {
       width: 18,
       height: 18,
-      border: '1.5px solid #3d2314',
+      border: '1.5px solid #111111',
       backgroundColor: 'transparent',
     },
     hover: {
       width: 36,
       height: 36,
-      border: '1.5px solid #3d2314',
-      backgroundColor: 'rgba(61, 35, 20, 0.05)',
+      border: '1.5px solid #ff3b00',
+      backgroundColor: 'rgba(255, 59, 0, 0.05)',
     },
     magnetic: {
       width: 50,
       height: 50,
-      border: '1.5px solid #3d2314',
+      border: '1.5px solid #ff3b00',
       backgroundColor: 'transparent',
     },
     taste: {
       width: 56,
       height: 56,
-      border: '1.5px solid #3d2314',
-      backgroundColor: '#3d2314',
+      border: '1.5px solid #ff3b00',
+      backgroundColor: '#ff3b00',
     }
   };
 
   const innerVariants = {
-    default: { scale: 1, backgroundColor: '#3d2314' },
-    hover: { scale: 0.5, backgroundColor: '#3d2314' },
-    magnetic: { scale: 0, backgroundColor: '#3d2314' },
-    taste: { scale: 0, backgroundColor: '#eae4d9' }
+    default: { scale: 1, backgroundColor: '#111111' },
+    hover: { scale: 0.5, backgroundColor: '#ff3b00' },
+    magnetic: { scale: 0, backgroundColor: '#ff3b00' },
+    taste: { scale: 0, backgroundColor: '#efedee' }
   };
 
   return (
